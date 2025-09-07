@@ -1,40 +1,38 @@
-// app/about/page.tsx
-import React from "react";
-
 export default function AboutPage() {
   const schemaData = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: "Skitbit International",
-    url: "https://theskitbit.com",
-    logo: "https://theskitbit.com/logo.png",
+    name: "SkillNova",
+    url: "https://skillnova.ai",
+    logo: "https://skillnova.ai/logo.png",
     description:
-      "Skitbit International is a 3D product animation agency serving clients in Miami, Los Angeles, New York, Canada, and the UK.",
+      "SkillNova is an AI-powered career guidance platform that helps professionals navigate their career journeys with personalized insights and recommendations.",
     sameAs: [
-      "https://www.instagram.com/skitbit",
-      "https://www.linkedin.com/company/skitbit",
+      "https://www.instagram.com/skillnova",
+      "https://www.linkedin.com/company/skillnova",
+      "https://twitter.com/skillnova",
     ],
     address: {
       "@type": "PostalAddress",
-      addressLocality: "Miami",
-      addressRegion: "FL",
+      addressLocality: "San Francisco",
+      addressRegion: "CA",
       addressCountry: "US",
     },
     contactPoint: [
       {
         "@type": "ContactPoint",
-        telephone: "+1-555-555-5555",
+        telephone: "+1-555-SKILL-AI",
         contactType: "customer service",
       },
     ],
     areaServed: [
-      { "@type": "Place", name: "Miami" },
-      { "@type": "Place", name: "Los Angeles" },
-      { "@type": "Place", name: "New York" },
+      { "@type": "Place", name: "United States" },
       { "@type": "Place", name: "Canada" },
       { "@type": "Place", name: "United Kingdom" },
+      { "@type": "Place", name: "Australia" },
+      { "@type": "Place", name: "Global" },
     ],
-  };
+  }
 
   return (
     <>
@@ -48,11 +46,9 @@ export default function AboutPage() {
 
       {/* Hero Section */}
       <section className="relative bg-black text-white py-20 px-6 md:px-12 lg:px-20 text-center">
-        <h1 className="text-4xl md:text-6xl font-bold mb-6">
-          About Skitbit International
-        </h1>
+        <h1 className="text-4xl md:text-6xl font-bold mb-6">About SkillNova</h1>
         <p className="text-lg md:text-xl max-w-2xl mx-auto opacity-80">
-          Pioneering the future of 3D product animation for global brands.
+          Empowering careers through AI-driven guidance and personalized insights.
         </p>
       </section>
 
@@ -61,28 +57,28 @@ export default function AboutPage() {
         <div className="grid gap-12 md:grid-cols-3">
           {[
             {
-              title: "3D Product Animation",
-              desc: "Photo-realistic animations that showcase your products in stunning detail.",
+              title: "AI Career Guidance",
+              desc: "Personalized career recommendations powered by advanced AI algorithms and industry insights.",
             },
             {
               title: "Global Reach",
-              desc: "Serving Miami, LA, New York, Canada, and the UK with world-class visuals.",
+              desc: "Serving professionals worldwide with localized career advice and job market insights.",
             },
             {
-              title: "Cutting-edge Technology",
-              desc: "Using the latest rendering engines and motion design tools.",
+              title: "Smart Technology",
+              desc: "Using cutting-edge natural language processing and machine learning for career optimization.",
             },
             {
-              title: "Brand Storytelling",
-              desc: "Helping brands communicate their vision through immersive 3D visuals.",
+              title: "Resume Optimization",
+              desc: "AI-powered resume analysis and suggestions to maximize your job application success.",
             },
             {
-              title: "Collaborative Workflow",
-              desc: "Work directly with our creative team for maximum efficiency.",
+              title: "Interview Preparation",
+              desc: "Practice with our AI interviewer to build confidence and improve your interview skills.",
             },
             {
-              title: "SEO & Marketing Focus",
-              desc: "Optimized content to enhance your visibility on search engines.",
+              title: "Skill Assessment",
+              desc: "Comprehensive skill evaluation to identify strengths and areas for professional growth.",
             },
           ].map((feature, index) => (
             <div
@@ -98,19 +94,15 @@ export default function AboutPage() {
 
       {/* CTA Section */}
       <section className="py-20 bg-black text-center text-white px-6">
-        <h2 className="text-3xl md:text-4xl font-bold mb-6">
-          Ready to Elevate Your Brand?
-        </h2>
-        <p className="text-lg opacity-80 mb-8">
-          Let Skitbit International bring your products to life.
-        </p>
+        <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Transform Your Career?</h2>
+        <p className="text-lg opacity-80 mb-8">Let SkillNova guide you to your next career milestone.</p>
         <a
           href="/contact"
-          className="bg-white text-black px-6 py-3 rounded-full font-semibold hover:bg-neutral-200 transition-all"
+          className="bg-lime-400 text-black px-6 py-3 rounded-full font-semibold hover:bg-lime-300 transition-all"
         >
-          Get in Touch
+          Start Your Journey
         </a>
       </section>
     </>
-  );
+  )
 }

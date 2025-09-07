@@ -1,12 +1,13 @@
 import { Button } from "@/components/ui/button"
-import LazyVideo from "./lazy-video"
+import Image from "next/image"
+import Link from "next/link"
 
 export function Hero() {
   const buttonNew = (
     <Button asChild className="rounded-full bg-lime-400 px-6 text-black hover:bg-lime-300">
-      <a href="#contact" className="inline-flex items-center gap-1">
-        <span className="whitespace-nowrap">Get started</span>
-      </a>
+      <Link href="/login" className="inline-flex items-center gap-1">
+        <span className="whitespace-nowrap">Get Started</span>
+      </Link>
     </Button>
   )
 
@@ -15,15 +16,15 @@ export function Hero() {
       <div className="container mx-auto px-4">
         <div className="flex flex-col items-center justify-center py-14 sm:py-20 text-center gap-y-6">
           <h1 className="text-balance text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl md:text-6xl">
-            <span className="block my-[-60px]">Smarter Career Journeys,</span>
-            <span className="block mt-[55px]">
-              {"Guided by "}
+            <span className="block">SkillNova — Your </span>
+            <span className="block">
               <span className="text-lime-300 drop-shadow-[0_0_20px_rgba(132,204,22,0.35)]">AI</span>
+              {" Career Mentor"}
             </span>
           </h1>
 
           <p className="max-w-2xl mx-auto text-base leading-relaxed text-white/70 text-pretty">
-            Your AI mentor that turns conversations into career clarity.
+            Get personalized roadmaps, daily goals, and mentorship to master your career journey.
           </p>
 
           <div>{buttonNew}</div>
@@ -35,7 +36,7 @@ export function Hero() {
 
               return (
                 <div key={i} className={visibility}>
-                  <PhoneCard title={p.title} sub={p.sub} tone={p.tone} gradient={p.gradient} videoSrc={p.videoSrc} />
+                  <PhoneCard title={p.title} sub={p.sub} tone={p.tone} gradient={p.gradient} imageSrc={p.imageSrc} />
                 </div>
               )
             })}
@@ -51,37 +52,30 @@ function PhoneCard({
   sub = "Clear night. Great for render farm runs.",
   tone = "calm",
   gradient = "from-[#0f172a] via-[#14532d] to-[#052e16]",
-  videoSrc,
+  imageSrc,
 }: {
   title?: string
   sub?: string
   tone?: string
   gradient?: string
-  videoSrc?: string
+  imageSrc?: string
 }) {
   return (
     <div className="relative rounded-[28px] glass-border bg-neutral-900 p-2">
       <div className="relative aspect-[9/19] w-full overflow-hidden rounded-2xl bg-black">
-        <LazyVideo
-          src={
-            videoSrc ??
-            "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/b0f3222371106db366a14ca1c29cef55-1b1EWVSa4w3FL2zslcaCGYTy9vcxjF.mp4"
-          }
+        <Image
+          src={imageSrc ?? "/ai-career-guidance-chatbot-interface.jpg"}
+          alt={`${title} - ${sub}`}
+          fill
           className="absolute inset-0 h-full w-full object-cover"
-          autoplay={true}
-          loop={true}
-          muted={true}
-          playsInline={true}
-          aria-label={`${title} - ${sub}`}
+          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
         />
 
         <div className="relative z-10 p-3">
           <div className="mx-auto mb-3 h-1.5 w-16 rounded-full bg-white/20" />
           <div className="space-y-1 px-1">
-            <div className="text-3xl font-bold leading-snug text-white/90">{title}</div>
-            <p className="text-xs text-white/70">{sub}</p>
             <div className="mt-3 inline-flex items-center rounded-full bg-black/40 px-2 py-0.5 text-[10px] uppercase tracking-wider text-lime-300">
-              {tone === "calm" ? "skitbit app" : tone}
+              {tone === "calm" ? "skillnova ai" : tone}
             </div>
           </div>
         </div>
@@ -92,37 +86,38 @@ function PhoneCard({
 
 const phoneData = [
   {
-    title: "Conversions",
-    sub: "Turn clicks into paying customers.",
-    tone: "results",
+    title: "Career Guidance",
+    sub: "AI-powered career path recommendations.",
+    tone: "guidance",
     gradient: "from-[#0b0b0b] via-[#0f172a] to-[#020617]",
-    videoSrc:
-      "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/A%20new%20chapter%20in%20the%20story%20of%20success.__Introducing%20the%20new%20TAG%20Heuer%20Carrera%20Day-Date%20collection%2C%20reimagined%20with%20bold%20colors%2C%20refined%20finishes%2C%20and%20upgraded%20functionality%20to%20keep%20you%20focused%20on%20your%20goals.%20__Six%20-nDNoRQyFaZ8oaaoty4XaQz8W8E5bqA.mp4",
+    imageSrc: "/ai-career-guidance-chatbot-interface.jpg",
   },
   {
-    title: "Speed",
-    sub: "Launch in days, not weeks.",
-    tone: "speed",
+    title: "Resume Builder",
+    sub: "Smart resume optimization and tips.",
+    tone: "builder",
     gradient: "from-[#0b1a0b] via-[#052e16] to-[#022c22]",
+    imageSrc: "/ai-resume-builder-interface-with-suggestions.jpg",
   },
   {
-    title: "Social-Ready",
-    sub: "Made for IG, TikTok, and Meta.",
-    tone: "social",
+    title: "Interview Prep",
+    sub: "Practice with AI-powered mock interviews.",
+    tone: "interview",
     gradient: "from-[#001028] via-[#0b355e] to-[#052e5e]",
-    videoSrc:
-      "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Timeline%201-Ku3Y2Hgaw8hCiFEFg1ELtYp631rSzR.webm",
+    imageSrc: "/ai-interview-preparation-chatbot-conversation.jpg",
   },
   {
-    title: "Standout",
-    sub: "Be the product no one scrolls past.",
-    tone: "standout",
+    title: "Skill Assessment",
+    sub: "Identify strengths and growth areas.",
+    tone: "assessment",
     gradient: "from-[#0b0b0b] via-[#1f2937] to-[#0b1220]",
+    imageSrc: "/ai-skill-assessment-dashboard-with-career-insights.jpg",
   },
   {
-    title: "Premium",
-    sub: "Look like the market leader.",
-    tone: "premium",
+    title: "Job Matching",
+    sub: "Find opportunities that fit your profile.",
+    tone: "matching",
     gradient: "from-[#0b0b0b] via-[#111827] to-[#052e16]",
+    imageSrc: "/ai-job-matching-interface-showing-career-opportuni.jpg",
   },
 ]

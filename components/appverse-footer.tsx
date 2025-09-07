@@ -15,7 +15,7 @@ interface FooterContent {
 
 const defaultContent: FooterContent = {
   tagline: "Experience 3D animation like never before. We craft cinematic visuals for brands and products.",
-  copyright: "© 2025 — Skitbit International Uk",
+  copyright: "© 2025 — SkillNova International Uk",
 }
 
 export function AppverseFooter() {
@@ -23,7 +23,7 @@ export function AppverseFooter() {
 
   useEffect(() => {
     // Load content from localStorage
-    const savedContent = localStorage.getItem("skitbit-content")
+    const savedContent = localStorage.getItem("skillnova-content")
     if (savedContent) {
       try {
         const parsed = JSON.parse(savedContent)
@@ -78,7 +78,7 @@ export function AppverseFooter() {
                     loop={true}
                     muted={true}
                     playsInline={true}
-                    aria-label="Skitbit app preview - approvals made easy"
+                    aria-label="SkillNova app preview - approvals made easy"
                   />
                   {/* On-screen content */}
                   <div className="relative p-3">
@@ -98,6 +98,70 @@ export function AppverseFooter() {
         </Card>
       </div>
 
+      {/* FAQ Section for Career Chatbot */}
+      <div className="container mx-auto px-4 py-12 sm:py-16">
+        <Card className="relative overflow-hidden rounded-3xl liquid-glass p-6 sm:p-10">
+          <div className="relative">
+            <div className="text-center mb-8">
+              <p className="mb-2 text-[11px] tracking-widest text-lime-300">FREQUENTLY ASKED QUESTIONS</p>
+              <h3 className="text-2xl font-bold leading-tight text-white sm:text-3xl mb-4">
+                Everything you need to know about our AI Career Chatbot
+              </h3>
+            </div>
+
+            <div className="grid gap-6 md:grid-cols-2">
+              <div className="space-y-4">
+                <div>
+                  <h4 className="text-lg font-semibold text-white mb-2">How does the AI career guidance work?</h4>
+                  <p className="text-sm text-neutral-400">
+                    Our AI analyzes your skills, experience, and goals to provide personalized career recommendations
+                    and actionable insights.
+                  </p>
+                </div>
+                <div>
+                  <h4 className="text-lg font-semibold text-white mb-2">Can it help with resume optimization?</h4>
+                  <p className="text-sm text-neutral-400">
+                    Yes! Our AI reviews your resume and suggests improvements to increase your chances of landing
+                    interviews.
+                  </p>
+                </div>
+                <div>
+                  <h4 className="text-lg font-semibold text-white mb-2">Is my data secure and private?</h4>
+                  <p className="text-sm text-neutral-400">
+                    Absolutely. We use enterprise-grade encryption and never share your personal information with third
+                    parties.
+                  </p>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div>
+                  <h4 className="text-lg font-semibold text-white mb-2">
+                    What makes this different from other career tools?
+                  </h4>
+                  <p className="text-sm text-neutral-400">
+                    Our AI provides real-time, conversational guidance that adapts to your unique situation and career
+                    goals.
+                  </p>
+                </div>
+                <div>
+                  <h4 className="text-lg font-semibold text-white mb-2">Can it help with interview preparation?</h4>
+                  <p className="text-sm text-neutral-400">
+                    Yes! Practice with AI-powered mock interviews tailored to your industry and specific job roles.
+                  </p>
+                </div>
+                <div>
+                  <h4 className="text-lg font-semibold text-white mb-2">How accurate are the job recommendations?</h4>
+                  <p className="text-sm text-neutral-400">
+                    Our AI uses advanced matching algorithms to suggest opportunities that align with your skills and
+                    preferences.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Card>
+      </div>
+
       {/* Footer */}
       <footer className="border-t border-white/10 pb-20 md:pb-10">
         <div className="container mx-auto px-4 py-10">
@@ -105,8 +169,8 @@ export function AppverseFooter() {
             {/* Brand */}
             <div className="space-y-3">
               <div className="flex items-center gap-1.5">
-                <Image src="/icons/skitbit-white.svg" alt="Skitbit logo" width={24} height={24} className="h-6 w-6" />
-                <span className="text-xl font-semibold text-lime-300">Skitbit</span>
+                <Image src="/icons/skitbit-white.svg" alt="SkillNova logo" width={24} height={24} className="h-6 w-6" />
+                <span className="text-xl font-semibold text-lime-300">SkillNova</span>
               </div>
               <p className="max-w-sm text-sm text-neutral-400">{content.tagline}</p>
             </div>
@@ -131,11 +195,11 @@ export function AppverseFooter() {
                   <li className="flex items-center gap-2">
                     <Twitter className="h-4 w-4 text-neutral-400" />
                     <a
-                      href="https://twitter.com/theskitbit"
+                      href="https://twitter.com/skillnova"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="hover:text-lime-300"
-                      aria-label="Follow skitbit on Twitter"
+                      aria-label="Follow SkillNova on Twitter"
                     >
                       X/Twitter
                     </a>
@@ -143,11 +207,11 @@ export function AppverseFooter() {
                   <li className="flex items-center gap-2">
                     <Youtube className="h-4 w-4 text-neutral-400" />
                     <a
-                      href="https://www.youtube.com/@skitbitinternational"
+                      href="https://www.youtube.com/@skillnova"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="hover:text-lime-300"
-                      aria-label="Subscribe to skitbit on YouTube"
+                      aria-label="Subscribe to SkillNova on YouTube"
                     >
                       YouTube
                     </a>
@@ -155,11 +219,11 @@ export function AppverseFooter() {
                   <li className="flex items-center gap-2">
                     <Instagram className="h-4 w-4 text-neutral-400" />
                     <a
-                      href="https://instagram.com/theskitbit"
+                      href="https://instagram.com/skillnova"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="hover:text-lime-300"
-                      aria-label="Follow skitbit on Instagram"
+                      aria-label="Follow SkillNova on Instagram"
                     >
                       Instagram
                     </a>
@@ -167,11 +231,11 @@ export function AppverseFooter() {
                   <li className="flex items-center gap-2">
                     <MessageCircle className="h-4 w-4 text-neutral-400" />
                     <a
-                      href="https://threads.com/theskitbit"
+                      href="https://threads.com/skillnova"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="hover:text-lime-300"
-                      aria-label="Follow skitbit on Threads"
+                      aria-label="Follow SkillNova on Threads"
                     >
                       Threads
                     </a>
