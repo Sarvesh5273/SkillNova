@@ -1,10 +1,46 @@
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Plus, MessageSquare, Send } from "lucide-react"
-import Link from "next/link"
+"use client";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Plus, MessageSquare, Send, Trash2 } from "lucide-react";
+import Link from "next/link";
+import { createClient } from "@/lib/supabase/client";
+import { useState, useEffect } from "react";
+
+interface Chat {
+  id: string;
+  title: string;
+}
 
 export default function ChatUIPage() {
+  const [chats, setChats] = useState<Chat[]>([]);
+  const supabase = createClient();
+
+  useEffect(() => {
+    const fetchChats = async () => {
+      const { data, error } = await supabase.from("chats").select("id, title");
+      if (error) {
+        console.error("Error fetching chats:", error);
+      } else {
+        setChats(data as Chat[]);
+      }
+    };
+
+    fetchChats();
+  }, [supabase]);
+
+  const handleDeleteChat = async (chatId: string) => {
+    if (confirm("Are you sure you want to delete this chat?")) {
+      const { error } = await supabase.from("chats").delete().match({ id: chatId });
+      if (error) {
+        alert("Error deleting chat: " + error.message);
+      } else {
+        setChats(chats.filter((chat) => chat.id !== chatId));
+      }
+    }
+  };
+
   return (
     <div className="flex h-screen bg-black text-white">
       {/* Sidebar */}
@@ -19,18 +55,22 @@ export default function ChatUIPage() {
         <div className="flex-1 p-4">
           <div className="space-y-2">
             <div className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">Recent Chats</div>
-            <Button variant="ghost" className="w-full justify-start gap-2 text-gray-300 hover:bg-white/5">
-              <MessageSquare className="w-4 h-4" />
-              Career Roadmap Discussion
-            </Button>
-            <Button variant="ghost" className="w-full justify-start gap-2 text-gray-300 hover:bg-white/5">
-              <MessageSquare className="w-4 h-4" />
-              Interview Preparation
-            </Button>
-            <Button variant="ghost" className="w-full justify-start gap-2 text-gray-300 hover:bg-white/5">
-              <MessageSquare className="w-4 h-4" />
-              Skill Assessment
-            </Button>
+            {chats.map((chat) => (
+              <div key={chat.id} className="flex items-center group">
+                <Button variant="ghost" className="w-full justify-start gap-2 text-gray-300 hover:bg-white/5">
+                  <MessageSquare className="w-4 h-4" />
+                  {chat.title}
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="w-8 h-8 opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-300"
+                  onClick={() => handleDeleteChat(chat.id)}
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -92,5 +132,5 @@ export default function ChatUIPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }
