@@ -1,5 +1,4 @@
 import { SiteHeader } from "@/components/site-header"
-import { AppverseFooter } from "@/components/appverse-footer"
 import { Button } from "@/components/ui/button"
 import { MessageCircle } from "lucide-react"
 
@@ -7,7 +6,7 @@ export default function FAQPage() {
   return (
     <>
       <SiteHeader />
-      <section className="bg-[#0a0a0a] text-white py-16">
+      <section className="text-white py-16">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="relative overflow-hidden rounded-3xl liquid-glass p-6 sm:p-10 shadow-xl">
@@ -131,7 +130,6 @@ export default function FAQPage() {
           </div>
         </div>
       </section>
-      <AppverseFooter />
     </>
   )
 }

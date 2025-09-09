@@ -5,13 +5,14 @@ import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import Image from "next/image"
 import { Menu, Briefcase, Tag, HelpCircle, Info } from "lucide-react"
+import { LoginDialog } from "./login-dialog" // 1. Import is already correct
 
 export function SiteHeader() {
   const links = [
     { href: "/", label: "Home", icon: Briefcase },
     { href: "#pricing", label: "Pricing", icon: Tag },
-    { href: "faq", label: "FAQ", icon: HelpCircle },
-    { href: "About", label: "About", icon: Info },
+    { href: "/faq", label: "FAQ", icon: HelpCircle },
+    { href: "/About", label: "About", icon: Info },
   ]
 
   return (
@@ -33,17 +34,18 @@ export function SiteHeader() {
             ))}
           </nav>
 
-          {/* Desktop CTA */}
-          <div className="hidden md:flex">
-            <Button
-              asChild
-              className="bg-lime-400 text-black font-medium rounded-full px-6 py-2.5
-                         hover:bg-lime-300 hover:shadow-md hover:scale-[1.02]
-                         transition-all"
-            >
-              <Link href="#contact">Get Started</Link>
-            </Button>
-          </div>
+     {/* Desktop CTA */}
+<div className="hidden md:flex">
+  <LoginDialog>
+    <Button
+      className="bg-lime-400 text-black font-medium rounded-full px-6 py-2.5
+                 hover:bg-lime-300 hover:shadow-md hover:scale-[1.02]
+                 transition-all cursor-pointer" // <-- Add it here
+    >
+      Get Started
+    </Button>
+  </LoginDialog>
+</div>
 
           {/* Mobile Nav */}
           <div className="md:hidden">
@@ -82,16 +84,17 @@ export function SiteHeader() {
                 </nav>
 
                 {/* CTA Button at Bottom */}
-                <div className="mt-auto border-t border-gray-800 p-4">
-                  <Button
-                    asChild
-                    className="w-full bg-lime-400 text-black font-medium rounded-full px-6 py-2.5
-                               hover:bg-lime-300 hover:shadow-md hover:scale-[1.02]
-                               transition-all"
-                  >
-                    <Link href="#contact">Get Started</Link>
-                  </Button>
-                </div>
+<div className="mt-auto border-t border-gray-800 p-4">
+  <LoginDialog>
+    <Button
+      className="w-full bg-lime-400 text-black font-medium rounded-full px-6 py-2.5
+                 hover:bg-lime-300 hover:shadow-md hover:scale-[1.02]
+                 transition-all cursor-pointer" // <-- And add it here
+    >
+      Get Started
+    </Button>
+  </LoginDialog>
+</div>
               </SheetContent>
             </Sheet>
           </div>

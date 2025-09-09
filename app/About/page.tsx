@@ -45,7 +45,7 @@ export default function AboutPage() {
       />
 
       {/* Hero Section */}
-      <section className="relative bg-black text-white py-20 px-6 md:px-12 lg:px-20 text-center">
+      <section className="relative text-white py-20 px-6 md:px-12 lg:px-20 text-center">
         <h1 className="text-4xl md:text-6xl font-bold mb-6">About SkillNova</h1>
         <p className="text-lg md:text-xl max-w-2xl mx-auto opacity-80">
           Empowering careers through AI-driven guidance and personalized insights.
@@ -53,7 +53,7 @@ export default function AboutPage() {
       </section>
 
       {/* Feature Grid */}
-      <section className="py-16 bg-neutral-900 text-white px-6 md:px-12 lg:px-20">
+      <section className="py-16 text-white px-6 md:px-12 lg:px-20">
         <div className="grid gap-12 md:grid-cols-3">
           {[
             {
@@ -93,11 +93,11 @@ export default function AboutPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-black text-center text-white px-6">
+      <section className="py-20 text-center text-white px-6">
         <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Transform Your Career?</h2>
         <p className="text-lg opacity-80 mb-8">Let SkillNova guide you to your next career milestone.</p>
         <a
-          href="/contact"
+          href="/login"
           className="bg-lime-400 text-black px-6 py-3 rounded-full font-semibold hover:bg-lime-300 transition-all"
         >
           Start Your Journey

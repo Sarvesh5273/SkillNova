@@ -1,15 +1,16 @@
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import Link from "next/link"
+import { LoginDialog } from "./login-dialog" // Import the dialog component
 
 export function Hero() {
-  const buttonNew = (
-    <Button asChild className="rounded-full bg-lime-400 px-6 text-black hover:bg-lime-300">
-      <Link href="/login" className="inline-flex items-center gap-1">
-        <span className="whitespace-nowrap">Get Started</span>
-      </Link>
+ const buttonNew = (
+  <LoginDialog>
+    <Button className="rounded-full bg-lime-400 px-6 text-black hover:bg-lime-300 cursor-pointer">
+      Get Started
     </Button>
-  )
+  </LoginDialog>
+)
 
   return (
     <section className="relative isolate overflow-hidden">
@@ -88,36 +89,36 @@ const phoneData = [
   {
     title: "Career Guidance",
     sub: "AI-powered career path recommendations.",
-    tone: "guidance",
+    tone: "General",
     gradient: "from-[#0b0b0b] via-[#0f172a] to-[#020617]",
-    imageSrc: "/ai-career-guidance-chatbot-interface.jpg",
+    imageSrc: "/ai-career-guidance-chatbot-interface.png",
   },
   {
     title: "Resume Builder",
     sub: "Smart resume optimization and tips.",
     tone: "builder",
     gradient: "from-[#0b1a0b] via-[#052e16] to-[#022c22]",
-    imageSrc: "/ai-resume-builder-interface-with-suggestions.jpg",
+    imageSrc: "/ai-resume-builder-interface-with-suggestions.png",
   },
   {
     title: "Interview Prep",
     sub: "Practice with AI-powered mock interviews.",
-    tone: "interview",
+    tone: "Chatbot UI",
     gradient: "from-[#001028] via-[#0b355e] to-[#052e5e]",
-    imageSrc: "/ai-interview-preparation-chatbot-conversation.jpg",
+    imageSrc: "/ai-interview-preparation-chatbot-conversation.png",
   },
   {
     title: "Skill Assessment",
     sub: "Identify strengths and growth areas.",
     tone: "assessment",
     gradient: "from-[#0b0b0b] via-[#1f2937] to-[#0b1220]",
-    imageSrc: "/ai-skill-assessment-dashboard-with-career-insights.jpg",
+    imageSrc: "/ai-skill-assessment-dashboard-with-career-insights.png",
   },
   {
     title: "Job Matching",
     sub: "Find opportunities that fit your profile.",
     tone: "matching",
     gradient: "from-[#0b0b0b] via-[#111827] to-[#052e16]",
-    imageSrc: "/ai-job-matching-interface-showing-career-opportuni.jpg",
+    imageSrc: "/ai-job-matching-interface-showing-career-opportuni.png",
   },
 ]

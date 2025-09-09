@@ -3,10 +3,22 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Plus, MessageSquare, Send, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { useState, useEffect } from "react";
+import { toast } from "sonner";
 
 interface Chat {
   id: string;
@@ -19,11 +31,16 @@ export default function ChatUIPage() {
 
   useEffect(() => {
     const fetchChats = async () => {
-      const { data, error } = await supabase.from("chats").select("id, title");
-      if (error) {
-        console.error("Error fetching chats:", error);
-      } else {
-        setChats(data as Chat[]);
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user) {
+        const { data, error } = await supabase.from("chats").select("id, title").eq("user_id", user.id);
+        if (error) {
+          toast.error("Error fetching chats", { description: error.message });
+        } else {
+          setChats(data as Chat[]);
+        }
       }
     };
 
@@ -31,13 +48,12 @@ export default function ChatUIPage() {
   }, [supabase]);
 
   const handleDeleteChat = async (chatId: string) => {
-    if (confirm("Are you sure you want to delete this chat?")) {
-      const { error } = await supabase.from("chats").delete().match({ id: chatId });
-      if (error) {
-        alert("Error deleting chat: " + error.message);
-      } else {
-        setChats(chats.filter((chat) => chat.id !== chatId));
-      }
+    const { error } = await supabase.from("chats").delete().match({ id: chatId });
+    if (error) {
+      toast.error("Error deleting chat", { description: error.message });
+    } else {
+      setChats(chats.filter((chat) => chat.id !== chatId));
+      toast.success("Chat has been deleted.");
     }
   };
 
@@ -61,14 +77,31 @@ export default function ChatUIPage() {
                   <MessageSquare className="w-4 h-4" />
                   {chat.title}
                 </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="w-8 h-8 opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-300"
-                  onClick={() => handleDeleteChat(chat.id)}
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="w-8 h-8 opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-300"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This will permanently delete this chat. This action cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={() => handleDeleteChat(chat.id)}>
+                        Delete
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
             ))}
           </div>
