@@ -246,3 +246,8 @@ a[href*="v0.dev"] *,
   pointer-events: none !important;
   opacity: 0 !important;
 }
+/* app/globals.css */
+
+html {
+  scroll-behavior: smooth;
+}

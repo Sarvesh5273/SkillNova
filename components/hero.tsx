@@ -1,37 +1,77 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
-import Link from "next/link"
+import { motion } from "framer-motion"
 import { LoginDialog } from "./login-dialog" // Import the dialog component
 
 export function Hero() {
- const buttonNew = (
-  <LoginDialog>
-    <Button className="rounded-full bg-lime-400 px-6 text-black hover:bg-lime-300 cursor-pointer">
-      Get Started
-    </Button>
-  </LoginDialog>
-)
+  const buttonNew = (
+    <LoginDialog>
+      <Button className="rounded-full bg-lime-400 px-6 text-black hover:bg-lime-300 cursor-pointer">
+        Get Started
+      </Button>
+    </LoginDialog>
+  )
 
   return (
-    <section className="relative isolate overflow-hidden">
+    <motion.section
+      initial="hidden"
+      animate="show"
+      viewport={{ once: true }}
+      variants={{
+        hidden: {},
+        show: {
+          transition: {
+            staggerChildren: 0.15,
+          },
+        },
+      }}
+      className="relative isolate overflow-hidden"
+    >
       <div className="container mx-auto px-4">
         <div className="flex flex-col items-center justify-center py-14 sm:py-20 text-center gap-y-6">
-          <h1 className="text-balance text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl md:text-6xl">
+          <motion.h1
+            variants={{
+              hidden: { opacity: 0, y: 20 },
+              show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } },
+            }}
+            className="text-balance text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl md:text-6xl"
+          >
             <span className="block">SkillNova — Your </span>
             <span className="block">
               <span className="text-lime-300 drop-shadow-[0_0_20px_rgba(132,204,22,0.35)]">AI</span>
               {" Career Mentor"}
             </span>
-          </h1>
+          </motion.h1>
 
-          <p className="max-w-2xl mx-auto text-base leading-relaxed text-white/70 text-pretty">
+          <motion.p
+            variants={{
+              hidden: { opacity: 0, y: 20 },
+              show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } },
+            }}
+            className="max-w-2xl mx-auto text-base leading-relaxed text-white/70 text-pretty"
+          >
             Get personalized roadmaps, daily goals, and mentorship to master your career journey.
-          </p>
+          </motion.p>
 
-          <div>{buttonNew}</div>
+          <motion.div
+            variants={{
+              hidden: { opacity: 0, y: 20 },
+              show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } },
+            }}
+          >
+            {buttonNew}
+          </motion.div>
 
           {/* Phone grid mimic */}
-          <div className="mt-10 grid w-full gap-4 grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
+          <motion.div
+            variants={{
+              hidden: { opacity: 0, y: 20 },
+              show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } },
+            }}
+            className="mt-10 grid w-full gap-4 grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5"
+          >
             {phoneData.map((p, i) => {
               const visibility = i <= 2 ? "block" : i === 3 ? "hidden md:block" : i === 4 ? "hidden xl:block" : "hidden"
 
@@ -41,10 +81,10 @@ export function Hero() {
                 </div>
               )
             })}
-          </div>
+          </motion.div>
         </div>
       </div>
-    </section>
+    </motion.section>
   )
 }
 
