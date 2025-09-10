@@ -1,3 +1,8 @@
+"use client"
+
+import { LoginDialog } from "@/components/login-dialog";
+import { Button } from "@/components/ui/button";
+
 export default function AboutPage() {
   const schemaData = {
     "@context": "https://schema.org",
@@ -96,12 +101,11 @@ export default function AboutPage() {
       <section className="py-20 text-center text-white px-6">
         <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Transform Your Career?</h2>
         <p className="text-lg opacity-80 mb-8">Let SkillNova guide you to your next career milestone.</p>
-        <a
-          href="/login"
-          className="bg-lime-400 text-black px-6 py-3 rounded-full font-semibold hover:bg-lime-300 transition-all"
-        >
-          Start Your Journey
-        </a>
+        <LoginDialog>
+          <Button className="bg-lime-400 text-black px-6 py-3 rounded-full font-semibold hover:bg-lime-300 transition-all">
+            Start Your Journey
+          </Button>
+        </LoginDialog>
       </section>
     </>
   )

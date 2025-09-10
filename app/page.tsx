@@ -3,6 +3,7 @@ import { Hero } from "@/components/hero"
 import { Features } from "@/components/features"
 import { Pricing } from "@/components/pricing"
 import { AppverseFooter } from "@/components/appverse-footer"
+import { FaqSection } from "@/components/faq-section"
 import Script from "next/script"
 
 // ✅ Force static generation for low TTFB
@@ -82,6 +83,7 @@ export default function Page() {
         <Hero />
         <Features />
         <Pricing />
+        <FaqSection />
         <AppverseFooter />
       </main>
 

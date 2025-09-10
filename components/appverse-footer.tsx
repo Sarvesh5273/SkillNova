@@ -3,9 +3,7 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
 import { Instagram, Twitter, Youtube, MessageCircle } from "lucide-react"
-import LazyVideo from "./lazy-video"
 import Image from "next/image"
 
 interface FooterContent {
@@ -38,129 +36,6 @@ export function AppverseFooter() {
 
   return (
     <section className="text-white">
-      {/* Contact CTA */}
-      <div className="container mx-auto px-4 pt-12 sm:pt-16">
-        <div className="flex justify-center">
-          <Button
-            asChild
-            className="rounded-full bg-lime-400 px-6 py-2 text-sm font-medium text-black shadow-[0_0_20px_rgba(163,230,53,0.35)] hover:bg-lime-300"
-          >
-            <a href="#contact">Contact us</a>
-          </Button>
-        </div>
-      </div>
-
-      {/* Download the app */}
-      <div className="container mx-auto px-4 py-12 sm:py-16">
-        <Card className="relative overflow-hidden rounded-3xl liquid-glass p-6 sm:p-10">
-          <div className="relative grid items-center gap-8 md:grid-cols-2">
-            {/* Left copy */}
-            <div>
-              <p className="mb-2 text-[11px] tracking-widest text-lime-300">STREAMLINE YOUR LAUNCHES</p>
-              <h3 className="text-2xl font-bold leading-tight text-white sm:text-3xl">
-                Preview &amp; approve high-end 3D visuals from anywhere
-              </h3>
-              <p className="mt-2 max-w-prose text-sm text-neutral-400">
-                Review renders, leave timestamped comments, and approve scenes from anywhere. Using our revision &amp;
-                collaboration tools
-              </p>
-            </div>
-
-            {/* Right mockup */}
-            <div className="mx-auto w-full max-w-[320px]">
-              <div className="relative rounded-[28px] liquid-glass p-2 shadow-2xl">
-                <div className="relative aspect-[9/19] w-full overflow-hidden rounded-2xl bg-black">
-                  {/* Lazy-loaded video fills the screen */}
-                  <LazyVideo
-                    src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Timeline%202-YFaCK7cEiHWSMRv8XEHaLCoYj2SUAi.mp4"
-                    className="absolute inset-0 h-full w-full object-cover"
-                    autoplay={true}
-                    loop={true}
-                    muted={true}
-                    playsInline={true}
-                    aria-label="SkillNova app preview - approvals made easy"
-                  />
-                  {/* On-screen content */}
-                  <div className="relative p-3">
-                    <div className="mx-auto mb-3 h-1.5 w-16 rounded-full bg-white/20" />
-                    <div className="space-y-1 px-1">
-                      <div className="text-5xl font-extrabold text-lime-300">Approvals Made Easy</div>
-                      <p className="text-xs text-white/80">From feedback to approval in a single flow</p>
-                      <div className="mt-3 inline-flex items-center rounded-full bg-black/40 px-2 py-0.5 text-[10px] uppercase tracking-wider text-lime-300">
-                        Zero Hassle
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </Card>
-      </div>
-
-      {/* FAQ Section for Career Chatbot */}
-      <div className="container mx-auto px-4 py-12 sm:py-16">
-        <Card className="relative overflow-hidden rounded-3xl liquid-glass p-6 sm:p-10">
-          <div className="relative">
-            <div className="text-center mb-8">
-              <p className="mb-2 text-[11px] tracking-widest text-lime-300">FREQUENTLY ASKED QUESTIONS</p>
-              <h3 className="text-2xl font-bold leading-tight text-white sm:text-3xl mb-4">
-                Everything you need to know about our AI Career Chatbot
-              </h3>
-            </div>
-
-            <div className="grid gap-6 md:grid-cols-2">
-              <div className="space-y-4">
-                <div>
-                  <h4 className="text-lg font-semibold text-white mb-2">How does the AI career guidance work?</h4>
-                  <p className="text-sm text-neutral-400">
-                    Our AI analyzes your skills, experience, and goals to provide personalized career recommendations
-                    and actionable insights.
-                  </p>
-                </div>
-                <div>
-                  <h4 className="text-lg font-semibold text-white mb-2">Can it help with resume optimization?</h4>
-                  <p className="text-sm text-neutral-400">
-                    Yes! Our AI reviews your resume and suggests improvements to increase your chances of landing
-                    interviews.
-                  </p>
-                </div>
-                <div>
-                  <h4 className="text-lg font-semibold text-white mb-2">Is my data secure and private?</h4>
-                  <p className="text-sm text-neutral-400">
-                    Absolutely. We use enterprise-grade encryption and never share your personal information with third
-                    parties.
-                  </p>
-                </div>
-              </div>
-              <div className="space-y-4">
-                <div>
-                  <h4 className="text-lg font-semibold text-white mb-2">
-                    What makes this different from other career tools?
-                  </h4>
-                  <p className="text-sm text-neutral-400">
-                    Our AI provides real-time, conversational guidance that adapts to your unique situation and career
-                    goals.
-                  </p>
-                </div>
-                <div>
-                  <h4 className="text-lg font-semibold text-white mb-2">Can it help with interview preparation?</h4>
-                  <p className="text-sm text-neutral-400">
-                    Yes! Practice with AI-powered mock interviews tailored to your industry and specific job roles.
-                  </p>
-                </div>
-                <div>
-                  <h4 className="text-lg font-semibold text-white mb-2">How accurate are the job recommendations?</h4>
-                  <p className="text-sm text-neutral-400">
-                    Our AI uses advanced matching algorithms to suggest opportunities that align with your skills and
-                    preferences.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </Card>
-      </div>
 
       {/* Footer */}
       <footer className="border-t border-white/10 pb-20 md:pb-10">

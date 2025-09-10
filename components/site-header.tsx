@@ -11,7 +11,7 @@ export function SiteHeader() {
   const links = [
     { href: "/", label: "Home", icon: Briefcase },
     { href: "#pricing", label: "Pricing", icon: Tag },
-    { href: "/faq", label: "FAQ", icon: HelpCircle },
+    { href: "#faq", label: "FAQ", icon: HelpCircle },
     { href: "/About", label: "About", icon: Info },
   ]
 
