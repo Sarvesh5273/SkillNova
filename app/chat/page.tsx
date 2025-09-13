@@ -266,8 +266,7 @@ isSidebarOpen ? "pl-64" : "pl-20"
 
 <div className="relative">
 
-<Input placeholder="Ask me anything about your career..." className="bg-[#1e1f20] border-neutral-700 text-white placeholder:text-gray-400 rounded-full py-6 pl-5 pr-14 focus-visible:ring-purple-500/50" />
-
+<Input placeholder="Ask me anything about your career..." className="bg-[#1e1f20] border-neutral-700 text-white placeholder:text-gray-400 rounded-2xl text-base py-7 pl-6 pr-16" />
 <Button size="icon" className="absolute right-2 top-1/2 -translate-y-1/2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-full w-10 h-10">
 
 <Send className="w-5 h-5" />
