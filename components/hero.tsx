@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import { motion } from "framer-motion"
 import { LoginDialog } from "./login-dialog" // Import the dialog component
+import PhoneVideo from "./phone-video" // Import the PhoneVideo component
 
 export function Hero() {
   const buttonNew = (
@@ -77,7 +78,7 @@ export function Hero() {
 
               return (
                 <div key={i} className={visibility}>
-                  <PhoneCard title={p.title} sub={p.sub} tone={p.tone} gradient={p.gradient} imageSrc={p.imageSrc} />
+                  <PhoneCard title={p.title} sub={p.sub} tone={p.tone} gradient={p.gradient} imageSrc={p.imageSrc} videoSrc={p.videoSrc} />
                 </div>
               )
             })}
@@ -94,23 +95,29 @@ function PhoneCard({
   tone = "calm",
   gradient = "from-[#0f172a] via-[#14532d] to-[#052e16]",
   imageSrc,
+  videoSrc,
 }: {
   title?: string
   sub?: string
   tone?: string
   gradient?: string
   imageSrc?: string
+  videoSrc?: string
 }) {
   return (
     <div className="relative rounded-[28px] glass-border bg-neutral-900 p-2">
       <div className="relative aspect-[9/19] w-full overflow-hidden rounded-2xl bg-black">
-        <Image
-          src={imageSrc ?? "/ai-career-guidance-chatbot-interface.jpg"}
-          alt={`${title} - ${sub}`}
-          fill
-          className="absolute inset-0 h-full w-full object-cover"
-          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
-        />
+        {videoSrc ? (
+          <PhoneVideo src={videoSrc} className="absolute inset-0 h-full w-full object-cover" />
+        ) : (
+          <Image
+            src={imageSrc ?? "/ai-career-guidance-chatbot-interface.jpg"}
+            alt={`${title} - ${sub}`}
+            fill
+            className="absolute inset-0 h-full w-full object-cover"
+            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
+          />
+        )}
 
         <div className="relative z-10 p-3">
           <div className="mx-auto mb-3 h-1.5 w-16 rounded-full bg-white/20" />
@@ -131,34 +138,34 @@ const phoneData = [
     sub: "AI-powered career path recommendations.",
     tone: "General",
     gradient: "from-[#0b0b0b] via-[#0f172a] to-[#020617]",
-    imageSrc: "/ai-career-guidance-chatbot-interface.png",
+    videoSrc: "/videos/general.mp4",
   },
   {
     title: "Resume Builder",
     sub: "Smart resume optimization and tips.",
     tone: "builder",
     gradient: "from-[#0b1a0b] via-[#052e16] to-[#022c22]",
-    imageSrc: "/ai-resume-builder-interface-with-suggestions.png",
+    imageSrc: "/images/ai-resume-builder-interface-with-suggestions.png",
   },
   {
     title: "Interview Prep",
     sub: "Practice with AI-powered mock interviews.",
     tone: "Chatbot UI",
     gradient: "from-[#001028] via-[#0b355e] to-[#052e5e]",
-    imageSrc: "/ai-interview-preparation-chatbot-conversation.png",
+    videoSrc: "/videos/ui.mp4",
   },
   {
     title: "Skill Assessment",
     sub: "Identify strengths and growth areas.",
     tone: "assessment",
     gradient: "from-[#0b0b0b] via-[#1f2937] to-[#0b1220]",
-    imageSrc: "/ai-skill-assessment-dashboard-with-career-insights.png",
+    videoSrc: "/videos/skill.mp4",
   },
   {
     title: "Job Matching",
     sub: "Find opportunities that fit your profile.",
     tone: "matching",
     gradient: "from-[#0b0b0b] via-[#111827] to-[#052e16]",
-    imageSrc: "/ai-job-matching-interface-showing-career-opportuni.png",
+    videoSrc: "/videos/dashboard.mp4",
   },
 ]
