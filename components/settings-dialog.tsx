@@ -20,7 +20,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
@@ -98,11 +97,6 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
               Theme
             </Label>
             <div className="col-span-3 flex items-center space-x-2">
-              <Switch
-                id="theme"
-                checked={theme === "dark"}
-                onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
-              />
               <span className="text-sm text-gray-400">{theme === "dark" ? "Dark Mode" : "Light Mode"}</span>
             </div>
           </div>

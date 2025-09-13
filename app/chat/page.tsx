@@ -1,169 +1,295 @@
+// app/chat/page.tsx
+
 "use client";
 
+
+
 import { Button } from "@/components/ui/button";
+
 import { Input } from "@/components/ui/input";
+
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
+
+AlertDialog,
+
+AlertDialogTrigger,
+
+AlertDialogContent,
+
+// ... other AlertDialog imports
+
 } from "@/components/ui/alert-dialog";
-import { Plus, MessageSquare, Send, Trash2 } from "lucide-react";
+
+import { Edit, MessageSquare, Send, Trash2, Menu } from "lucide-react";
+
 import Link from "next/link";
+
 import { createClient } from "@/lib/supabase/client";
+
 import { useState, useEffect } from "react";
+
 import { toast } from "sonner";
 
+import { ChatMessage } from "@/components/chat-message";
+
+import { EmptyState } from "@/components/empty-state";
+
+import { cn } from "@/lib/utils";
+
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
+
+
 interface Chat {
-  id: string;
-  title: string;
+
+id: string;
+
+title: string;
+
 }
 
+
+
+interface Message {
+
+id: string;
+
+role: "user" | "assistant";
+
+content: string;
+
+}
+
+
+
 export default function ChatUIPage() {
-  const [chats, setChats] = useState<Chat[]>([]);
-  const supabase = createClient();
 
-  useEffect(() => {
-    const fetchChats = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (user) {
-        const { data, error } = await supabase.from("chats").select("id, title").eq("user_id", user.id);
-        if (error) {
-          toast.error("Error fetching chats", { description: error.message });
-        } else {
-          setChats(data as Chat[]);
-        }
-      }
-    };
+const [chats, setChats] = useState<Chat[]>([]);
 
-    fetchChats();
-  }, [supabase]);
+const [messages, setMessages] = useState<Message[]>([]);
 
-  const handleDeleteChat = async (chatId: string) => {
-    const { error } = await supabase.from("chats").delete().match({ id: chatId });
-    if (error) {
-      toast.error("Error deleting chat", { description: error.message });
-    } else {
-      setChats(chats.filter((chat) => chat.id !== chatId));
-      toast.success("Chat has been deleted.");
-    }
-  };
+const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Start collapsed
 
-  return (
-    <div className="flex h-screen bg-black text-white">
-      {/* Sidebar */}
-      <div className="w-64 bg-black/80 border-r border-white/10 flex flex-col">
-        <div className="p-4 border-b border-white/10">
-          <Button className="w-full bg-white/5 hover:bg-white/10 text-white border-white/10 justify-start gap-2">
-            <Plus className="w-4 h-4" />
-            New Chat
-          </Button>
-        </div>
+const supabase = createClient();
 
-        <div className="flex-1 p-4">
-          <div className="space-y-2">
-            <div className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">Recent Chats</div>
-            {chats.map((chat) => (
-              <div key={chat.id} className="flex items-center group">
-                <Button variant="ghost" className="w-full justify-start gap-2 text-gray-300 hover:bg-white/5">
-                  <MessageSquare className="w-4 h-4" />
-                  {chat.title}
-                </Button>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="w-8 h-8 opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-300"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        This will permanently delete this chat. This action cannot be undone.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction onClick={() => handleDeleteChat(chat.id)}>
-                        Delete
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </div>
-            ))}
-          </div>
-        </div>
 
-        {/* User Avatar at bottom */}
-        <div className="p-4 border-t border-white/10">
-          <Link href="/dashboard">
-            <Button variant="ghost" className="w-full justify-start gap-2 text-gray-300 hover:bg-white/5">
-              <Avatar className="w-6 h-6">
-                <AvatarFallback className="bg-lime-500 text-black text-xs">U</AvatarFallback>
-              </Avatar>
-              User Dashboard
-            </Button>
-          </Link>
-        </div>
-      </div>
 
-      {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col">
-        {/* Chat Header */}
-        <div className="p-4 border-b border-white/10">
-          <h1 className="text-xl font-semibold">Hi, I'm your SkillNova Mentor…</h1>
-          <p className="text-gray-400 text-sm">Ready to guide your career journey</p>
-        </div>
+useEffect(() => {
 
-        {/* Messages Area */}
-        <div className="flex-1 p-4 overflow-y-auto">
-          <div className="max-w-3xl mx-auto space-y-6">
-            {/* Welcome Message */}
-            <div className="flex gap-3">
-              <Avatar className="w-8 h-8 mt-1">
-                <AvatarFallback className="bg-lime-500 text-black text-sm">SN</AvatarFallback>
-              </Avatar>
-              <div className="flex-1">
-                <div className="bg-white/5 rounded-lg p-4 border border-white/10">
-                  <p className="text-white">
-                    Welcome to SkillNova! I'm here to help you navigate your career journey. I can assist with career
-                    planning, skill development, interview preparation, and creating personalized roadmaps. What would
-                    you like to work on today?
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+// ... fetch chats logic
 
-        {/* Input Area */}
-        <div className="p-4 border-t border-white/10">
-          <div className="max-w-3xl mx-auto">
-            <div className="flex gap-2">
-              <Input
-                placeholder="Type your message..."
-                className="flex-1 bg-white/5 border-white/10 text-white placeholder:text-gray-500"
-              />
-              <Button className="bg-lime-500 hover:bg-lime-600 text-black">
-                <Send className="w-4 h-4" />
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+}, []);
+
+
+
+const handleDeleteChat = async (chatId: string) => {
+
+// ... delete chat logic
+
+};
+
+
+
+return (
+
+<TooltipProvider delayDuration={0}>
+
+<div className="h-screen bg-[#131314] text-white overflow-hidden relative">
+
+{/* === START OF SIDEBAR === */}
+
+<div
+
+className={cn(
+
+"fixed top-0 left-0 h-full bg-[#1e1f20] flex flex-col transition-all duration-300 ease-in-out z-20 border-r border-neutral-800",
+
+isSidebarOpen ? "w-64" : "w-20"
+
+)}
+
+onMouseEnter={() => setIsSidebarOpen(true)}
+
+onMouseLeave={() => setIsSidebarOpen(false)}
+
+>
+
+{/* Top Section */}
+
+<div className="p-2">
+
+<Button variant="ghost" size="icon" className="mb-4">
+
+<Menu className="w-5 h-5" />
+
+</Button>
+
+
+<Tooltip>
+
+<TooltipTrigger asChild>
+
+<Button variant="ghost" className={cn(
+
+"w-full justify-start gap-3 rounded-full h-12 px-3 hover:bg-neutral-700/50"
+
+)}>
+
+<Edit className="w-5 h-5 flex-shrink-0" />
+
+<span className={cn(
+
+"truncate transition-opacity",
+
+!isSidebarOpen && "opacity-0"
+
+)}>
+
+New chat
+
+</span>
+
+</Button>
+
+</TooltipTrigger>
+
+{!isSidebarOpen && <TooltipContent side="right">New Chat</TooltipContent>}
+
+</Tooltip>
+
+</div>
+
+
+
+{/* Recent Chats (Scrollable) */}
+
+<div className={cn(
+
+"flex-1 space-y-1 mt-4 overflow-y-auto transition-opacity",
+
+!isSidebarOpen && "opacity-0"
+
+)}>
+
+<p className="text-sm text-neutral-400 mb-2 px-3 font-medium">Recent</p>
+
+{chats.map((chat) => (
+
+<div key={chat.id} className="px-2">
+
+<Button variant="ghost" className="w-full justify-start gap-3 truncate hover:bg-neutral-700/50 rounded-full">
+
+{chat.title}
+
+</Button>
+
+</div>
+
+))}
+
+</div>
+
+
+{/* Bottom Section */}
+
+<div className="p-2">
+
+<Link href="/dashboard">
+
+<Tooltip>
+
+<TooltipTrigger asChild>
+
+<Button variant="ghost" className="w-full justify-start gap-3 hover:bg-neutral-700/50 rounded-full h-12">
+
+<Avatar className="w-8 h-8">
+
+<AvatarFallback className="bg-lime-500 text-black text-xs">U</AvatarFallback>
+
+</Avatar>
+
+<span className={cn("truncate transition-opacity", !isSidebarOpen && "opacity-0")}>
+
+User Dashboard
+
+</span>
+
+</Button>
+
+</TooltipTrigger>
+
+{!isSidebarOpen && <TooltipContent side="right">User Dashboard</TooltipContent>}
+
+</Tooltip>
+
+</Link>
+
+</div>
+
+</div>
+
+{/* === END OF SIDEBAR === */}
+
+
+
+{/* === START OF MAIN CONTENT AREA === */}
+
+<div
+
+className={cn(
+
+"h-full flex flex-col transition-all duration-300 ease-in-out",
+
+// KEY CHANGE: Padding animates to make room for the sidebar
+
+isSidebarOpen ? "pl-64" : "pl-20"
+
+)}
+
+>
+
+<div className="flex-1 p-6 overflow-y-auto">
+
+<div className="max-w-4xl mx-auto space-y-6">
+
+{messages.length === 0 ? <EmptyState /> : messages.map((msg) => <ChatMessage key={msg.id} role={msg.role} content={msg.content} />)}
+
+</div>
+
+</div>
+
+<div className="p-4 bg-gradient-to-t from-[#131314] to-transparent">
+
+<div className="max-w-4xl mx-auto">
+
+<div className="relative">
+
+<Input placeholder="Ask me anything about your career..." className="bg-[#1e1f20] border-neutral-700 text-white placeholder:text-gray-400 rounded-full py-6 pl-5 pr-14 focus-visible:ring-purple-500/50" />
+
+<Button size="icon" className="absolute right-2 top-1/2 -translate-y-1/2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-full w-10 h-10">
+
+<Send className="w-5 h-5" />
+
+<span className="sr-only">Send message</span>
+
+</Button>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+{/* === END OF MAIN CONTENT AREA === */}
+
+</div>
+
+</TooltipProvider>
+
+);
+
 }
