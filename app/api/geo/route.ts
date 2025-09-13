@@ -3,11 +3,10 @@ import { NextResponse } from "next/server"
 const SOUTH_ASIA = new Set(["IN", "PK", "BD"])
 
 export async function GET(request: Request) {
-  // Prefer Vercel country header; fall back to Accept-Language / timezone heuristics.
+  // Removed the Vercel-specific header check
   const countryHeader =
-    request.headers.get("x-vercel-ip-country") ||
     request.headers.get("x-country-code") ||
-    request.headers.get("cf-ipcountry") ||
+    request.headers.get("cf-ipcountry") || // Cloudflare header
     ""
 
   let country = countryHeader.toUpperCase()

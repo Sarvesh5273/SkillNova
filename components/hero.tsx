@@ -78,7 +78,7 @@ export function Hero() {
 
               return (
                 <div key={i} className={visibility}>
-                  <PhoneCard title={p.title} sub={p.sub} tone={p.tone} gradient={p.gradient} imageSrc={p.imageSrc} videoSrc={p.videoSrc} />
+                  <PhoneCard title={p.title} sub={p.sub} tone={p.tone} gradient={p.gradient} videoSrc={p.videoSrc} />
                 </div>
               )
             })}
@@ -145,7 +145,7 @@ const phoneData = [
     sub: "Smart resume optimization and tips.",
     tone: "builder",
     gradient: "from-[#0b1a0b] via-[#052e16] to-[#022c22]",
-    imageSrc: "/images/ai-resume-builder-interface-with-suggestions.png",
+    videoSrc: "/videos/builder.mp4",
   },
   {
     title: "Interview Prep",

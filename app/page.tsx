@@ -4,12 +4,32 @@ import { Features } from "@/components/features"
 import { Pricing } from "@/components/pricing"
 import { AppverseFooter } from "@/components/appverse-footer"
 import { FaqSection } from "@/components/faq-section"
+import { AboutSection } from "@/components/about-section"
 import Script from "next/script"
+import { headers } from "next/headers"
 
-// ✅ Force static generation for low TTFB
-export const dynamic = "force-static"
+// ✅ Force static generation for low TTFB, but allow dynamic headers
+export const dynamic = "force-dynamic"
+
+type Currency = "INR" | "USD"
+
+// Function to determine currency on the server
+function getCurrency(): Currency {
+  const headersList = headers()
+  // Removed the Vercel-specific header check
+  const countryHeader =
+    headersList.get("x-country-code") ||
+    headersList.get("cf-ipcountry") || // Cloudflare header
+    ""
+
+  const country = countryHeader.toUpperCase()
+  const isSouthAsia = ["IN", "PK", "BD"].includes(country)
+  return isSouthAsia ? "INR" : "USD"
+}
 
 export default function Page() {
+  const currency = getCurrency() // Get currency on the server
+
   const pricingStructuredData = {
     "@context": "https://schema.org",
     "@type": "WebPageElement",
@@ -73,6 +93,12 @@ export default function Page() {
         name: "Pricing Section",
         url: "https://skillnova.com/#pricing",
       },
+      {
+        "@type": "WebPageElement",
+        "@id": "https://skillnova.com/#about",
+        name: "About Section",
+        url: "https://skillnova.com/#about",
+      },
     ],
   }
 
@@ -82,8 +108,9 @@ export default function Page() {
         <SiteHeader />
         <Hero />
         <Features />
-        <Pricing />
+        <Pricing currency={currency} />
         <FaqSection />
+        <AboutSection />
         <AppverseFooter />
       </main>
 

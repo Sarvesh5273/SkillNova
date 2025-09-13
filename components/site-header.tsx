@@ -9,15 +9,16 @@ import { Menu, Briefcase, Tag, HelpCircle, Info } from "lucide-react"
 import { LoginDialog } from "./login-dialog"
 import { cn } from "@/lib/utils"
 
+// Moved links array outside the component to prevent re-creation on every render
+const links = [
+  { href: "/", label: "Home", icon: Briefcase },
+  { href: "#pricing", label: "Pricing", icon: Tag },
+  { href: "#faq", label: "FAQ", icon: HelpCircle },
+  { href: "#about", label: "About", icon: Info },
+]
+
 export function SiteHeader() {
   const [activeLink, setActiveLink] = useState("/")
-
-  const links = [
-    { href: "/", label: "Home", icon: Briefcase },
-    { href: "#pricing", label: "Pricing", icon: Tag },
-    { href: "#faq", label: "FAQ", icon: HelpCircle },
-    { href: "/About", label: "About", icon: Info },
-  ]
 
   useEffect(() => {
     const handleScroll = () => {
@@ -45,25 +46,28 @@ export function SiteHeader() {
     return () => {
       window.removeEventListener("scroll", handleScroll)
     }
-  }, [])
+  }, []) // Dependency array is empty because 'links' is now stable
 
-  // 1. Create a click handler for navigation links
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    // If the link is for the top of the page
-    if (href === "/") {
-      // Prevent the default link behavior (page reload)
-      e.preventDefault();
-      // Smoothly scroll to the top of the window
+    if (href.startsWith("#")) {
+      e.preventDefault()
+      const section = document.querySelector(href) as HTMLElement | null
+      if (section) {
+        window.scrollTo({
+          top: section.offsetTop - 80, // Offset for sticky header
+          behavior: "smooth",
+        })
+        setActiveLink(href)
+      }
+    } else if (href === "/") {
+      e.preventDefault()
       window.scrollTo({
         top: 0,
-        behavior: "smooth"
-      });
-      // Manually set the active link state
-      setActiveLink("/");
+        behavior: "smooth",
+      })
+      setActiveLink("/")
     }
-    // For all other links (like #pricing, /About), the default behavior is fine.
-  };
-
+  }
 
   return (
     <header className="sticky top-0 z-50 p-4">
@@ -81,7 +85,6 @@ export function SiteHeader() {
               <Link
                 key={l.href}
                 href={l.href}
-                // 2. Add the onClick handler to each link
                 onClick={(e) => handleNavClick(e, l.href)}
                 className={cn(
                   "hover:text-purple-300 transition-colors",
@@ -130,7 +133,6 @@ export function SiteHeader() {
                     <Link
                       key={l.href}
                       href={l.href}
-                      // 3. Also add the handler to the mobile links
                       onClick={(e) => handleNavClick(e, l.href)}
                       className={cn(
                         "flex items-center gap-3 px-4 py-3 hover:bg-gray-900/50 transition-colors",

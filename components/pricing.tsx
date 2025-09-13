@@ -1,11 +1,10 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { CheckCircle2 } from "lucide-react"
-import { motion, Variants } from "framer-motion" // Make sure to import motion and Variants
+import { motion, Variants } from "framer-motion"
+import { LoginDialog } from "./login-dialog" // Make sure this is imported
 
 type Feature = { text: string; muted?: boolean }
 
@@ -27,35 +26,7 @@ const PRICES: Record<Currency, { free: string; pro: string; enterprise: string; 
   USD: { free: "$0", pro: "$29", enterprise: "$99", save: "Save 20%" },
 }
 
-// (guessLocalCurrency function remains the same)
-function guessLocalCurrency(): Currency {
-  const lang = typeof navigator !== "undefined" ? navigator.language : ""
-  const tz = typeof Intl !== "undefined" ? Intl.DateTimeFormat().resolvedOptions().timeZone : ""
-  if (/-(IN|PK|BD)\b/i.test(lang) || /(Kolkata|Karachi|Dhaka)/i.test(tz || "")) return "INR"
-  return "USD"
-}
-
-export function Pricing() {
-  const [currency, setCurrency] = useState<Currency>("USD")
-
-  useEffect(() => {
-    let cancelled = false
-    async function load() {
-      try {
-        const res = await fetch("/api/geo", { cache: "no-store" })
-        if (!res.ok) throw new Error("geo failed")
-        const data = await res.json()
-        if (!cancelled) setCurrency(data?.currency === "INR" ? "INR" : "USD")
-      } catch {
-        if (!cancelled) setCurrency(guessLocalCurrency())
-      }
-    }
-    load()
-    return () => {
-      cancelled = true
-    }
-  }, [])
-
+export function Pricing({ currency = "USD" }: { currency: Currency }) {
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
     show: {
@@ -122,9 +93,11 @@ export function Pricing() {
                   <meta itemProp="priceCurrency" content={currency} />
                 </div>
                 <div className="flex gap-2">
-                  <Button asChild className="w-full rounded-full px-4 py-2 text-sm font-medium text-black shadow transition-[box-shadow,transform,filter] active:translate-y-[1px]" style={{ backgroundColor: ACCENT }}>
-                    <Link href="/login">Get Started</Link>
-                  </Button>
+                  <LoginDialog plan={{ name: "Free", price: PRICES[currency].free }}>
+                    <Button className="w-full cursor-pointer rounded-full px-4 py-2 text-sm font-medium text-black shadow transition-[box-shadow,transform,filter] active:translate-y-[1px]" style={{ backgroundColor: ACCENT }}>
+                      Get Started
+                    </Button>
+                  </LoginDialog>
                 </div>
               </CardHeader>
               <CardContent className="pt-0">
@@ -155,9 +128,11 @@ export function Pricing() {
                   <meta itemProp="priceCurrency" content={currency} />
                 </div>
                 <div className="flex gap-2">
-                  <Button asChild className="w-full rounded-full px-4 py-2 text-sm font-medium text-black shadow transition-[box-shadow,transform,filter] active:translate-y-[1px]" style={{ backgroundColor: ACCENT }}>
-                    <Link href="/login">Get Started</Link>
-                  </Button>
+                  <LoginDialog plan={{ name: "Pro", price: PRICES[currency].pro }}>
+                    <Button className="w-full cursor-pointer rounded-full px-4 py-2 text-sm font-medium text-black shadow transition-[box-shadow,transform,filter] active:translate-y-[1px]" style={{ backgroundColor: ACCENT }}>
+                      Get Started
+                    </Button>
+                  </LoginDialog>
                 </div>
               </CardHeader>
               <CardContent className="pt-0">
@@ -187,9 +162,11 @@ export function Pricing() {
                   <meta itemProp="priceCurrency" content={currency} />
                 </div>
                 <div className="flex gap-2">
-                  <Button asChild className="w-full rounded-full px-4 py-2 text-sm font-medium text-black shadow transition-[box-shadow,transform,filter] active:translate-y-[1px]" style={{ backgroundColor: ACCENT }}>
-                    <Link href="#contact">Contact Sales</Link>
-                  </Button>
+                   <LoginDialog plan={{ name: "Enterprise", price: PRICES[currency].enterprise }}>
+                    <Button className="w-full cursor-pointer rounded-full px-4 py-2 text-sm font-medium text-black shadow transition-[box-shadow,transform,filter] active:translate-y-[1px]" style={{ backgroundColor: ACCENT }}>
+                      Get Started
+                    </Button>
+                  </LoginDialog>
                 </div>
               </CardHeader>
               <CardContent className="relative pt-0">
@@ -208,3 +185,4 @@ export function Pricing() {
     </motion.section>
   )
 }
+

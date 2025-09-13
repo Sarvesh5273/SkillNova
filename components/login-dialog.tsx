@@ -3,6 +3,7 @@
 import type React from "react"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import HCaptcha from "@hcaptcha/react-hcaptcha"
 import {
   Dialog,
   DialogContent,
@@ -23,31 +24,51 @@ import { Label } from "@/components/ui/label"
 import { createClient } from "@/lib/supabase/client"
 
 interface LoginDialogProps {
-  children: React.ReactNode // This will be the trigger button
+  children: React.ReactNode
+  plan?: { name: string; price: string }
 }
 
-export function LoginDialog({ children }: LoginDialogProps) {
+export function LoginDialog({ children, plan }: LoginDialogProps) {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [name, setName] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null)
   const router = useRouter()
+  const supabase = createClient()
+
+  const HCAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY || "10000000-ffff-ffff-ffff-000000000001"
+
+  const handleVerificationSuccess = (token: string) => {
+    setCaptchaToken(token)
+  }
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    const supabase = createClient()
     setIsLoading(true)
     setError(null)
+
+    if (!captchaToken) {
+      setError("Please complete the CAPTCHA challenge.")
+      setIsLoading(false)
+      return
+    }
 
     try {
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
+        options: { captchaToken },
       })
       if (error) throw error
-      router.push("/chat")
+
+      if (plan && plan.name !== "Free") {
+        router.push(`/payment?plan=${plan.name}&price=${encodeURIComponent(plan.price)}`)
+      } else {
+        router.push("/chat")
+      }
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred")
     } finally {
@@ -57,9 +78,14 @@ export function LoginDialog({ children }: LoginDialogProps) {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
-    const supabase = createClient()
     setIsLoading(true)
     setError(null)
+
+    if (!captchaToken) {
+      setError("Please complete the CAPTCHA challenge.")
+      setIsLoading(false)
+      return
+    }
 
     if (password !== confirmPassword) {
       setError("Passwords do not match")
@@ -74,19 +100,26 @@ export function LoginDialog({ children }: LoginDialogProps) {
     }
 
     try {
+      // For paid plans, we need to redirect to payment *after* email confirmation.
+      // We'll add the plan details to the "next" URL for our callback to handle.
+      let redirectTo = `${window.location.origin}/auth/callback`
+      if (plan && plan.name !== "Free") {
+        redirectTo += `?next=/payment?plan=${plan.name.toLowerCase()}&price=${encodeURIComponent(plan.price)}`
+      }
+
       const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          emailRedirectTo:
-            process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL ||
-            `${window.location.origin}/chat`,
+          captchaToken,
+          emailRedirectTo: redirectTo,
           data: {
             full_name: name,
           },
         },
       })
       if (error) throw error
+
       router.push("/auth/sign-up-success")
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred")
@@ -104,11 +137,11 @@ export function LoginDialog({ children }: LoginDialogProps) {
             Welcome to SkillNova
           </DialogTitle>
           <DialogDescription className="text-gray-400">
-            Your AI career mentor awaits
+            {plan ? `Signing up for the ${plan.name} plan` : "Your AI career mentor awaits"}
           </DialogDescription>
         </DialogHeader>
 
-        <Tabs defaultValue="login" className="w-full">
+        <Tabs defaultValue="signup" className="w-full">
           <TabsList className="grid w-full grid-cols-2 bg-white/5">
             <TabsTrigger
               value="login"
@@ -124,118 +157,57 @@ export function LoginDialog({ children }: LoginDialogProps) {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent
-            value="login"
-            className="space-y-4 mt-6 data-[state=active]:animate-in data-[state=active]:fade-in-0 data-[state=active]:zoom-in-95"
-          >
+          <TabsContent value="login" className="space-y-4 mt-6">
             <form onSubmit={handleLogin} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email-login" className="text-white">
-                  Email
-                </Label>
-                <Input
-                  id="email-login"
-                  type="email"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="bg-white/5 border-white/10 text-white placeholder:text-gray-500"
-                  required
-                />
+                <Label htmlFor="email-login" className="text-white">Email</Label>
+                <Input id="email-login" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="bg-white/5 border-white/10 text-white" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password-login" className="text-white">
-                  Password
-                </Label>
-                <Input
-                  id="password-login"
-                  type="password"
-                  placeholder="Enter your password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="bg-white/5 border-white/10 text-white placeholder:text-gray-500"
-                  required
-                />
+                <Label htmlFor="password-login" className="text-white">Password</Label>
+                <Input id="password-login" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="bg-white/5 border-white/10 text-white" />
               </div>
+
+              <HCaptcha
+                sitekey={HCAPTCHA_SITE_KEY}
+                onVerify={handleVerificationSuccess}
+                theme="dark"
+              />
+
               {error && <p className="text-sm text-red-400">{error}</p>}
-              <Button
-                type="submit"
-                disabled={isLoading}
-                className="w-full bg-lime-500 hover:bg-lime-600 text-black font-semibold"
-              >
+              <Button type="submit" disabled={isLoading} className="w-full bg-lime-500 hover:bg-lime-600 text-black font-semibold">
                 {isLoading ? "Signing in..." : "Continue"}
               </Button>
             </form>
           </TabsContent>
 
-          <TabsContent
-            value="signup"
-            className="space-y-4 mt-6 data-[state=active]:animate-in data-[state=active]:fade-in-0 data-[state=active]:zoom-in-95"
-          >
+          <TabsContent value="signup" className="space-y-4 mt-6">
             <form onSubmit={handleSignUp} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="signup-name" className="text-white">
-                  Full Name
-                </Label>
-                <Input
-                  id="signup-name"
-                  type="text"
-                  placeholder="Enter your full name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="bg-white/5 border-white/10 text-white placeholder:text-gray-500"
-                  required
-                />
+                <Label htmlFor="signup-name" className="text-white">Full Name</Label>
+                <Input id="signup-name" type="text" value={name} onChange={(e) => setName(e.target.value)} required className="bg-white/5 border-white/10 text-white" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="signup-email" className="text-white">
-                  Email
-                </Label>
-                <Input
-                  id="signup-email"
-                  type="email"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="bg-white/5 border-white/10 text-white placeholder:text-gray-500"
-                  required
-                />
+                <Label htmlFor="signup-email" className="text-white">Email</Label>
+                <Input id="signup-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="bg-white/5 border-white/10 text-white" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="signup-password" className="text-white">
-                  Password
-                </Label>
-                <Input
-                  id="signup-password"
-                  type="password"
-                  placeholder="Create a password (min 6 characters)"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="bg-white/5 border-white/10 text-white placeholder:text-gray-500"
-                  required
-                  minLength={6}
-                />
+                <Label htmlFor="signup-password" className="text-white">Password</Label>
+                <Input id="signup-password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} className="bg-white/5 border-white/10 text-white" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="confirm-password" className="text-white">
-                  Confirm Password
-                </Label>
-                <Input
-                  id="confirm-password"
-                  type="password"
-                  placeholder="Confirm your password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="bg-white/5 border-white/10 text-white placeholder:text-gray-500"
-                  required
-                />
+                <Label htmlFor="confirm-password" className="text-white">Confirm Password</Label>
+                <Input id="confirm-password" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required className="bg-white/5 border-white/10 text-white" />
               </div>
+
+              <HCaptcha
+                sitekey={HCAPTCHA_SITE_KEY}
+                onVerify={handleVerificationSuccess}
+                theme="dark"
+              />
+
               {error && <p className="text-sm text-red-400">{error}</p>}
-              <Button
-                type="submit"
-                disabled={isLoading}
-                className="w-full bg-lime-500 hover:bg-lime-600 text-black font-semibold"
-              >
+              <Button type="submit" disabled={isLoading} className="w-full bg-lime-500 hover:bg-lime-600 text-black font-semibold">
                 {isLoading ? "Creating account..." : "Continue"}
               </Button>
             </form>
@@ -245,3 +217,4 @@ export function LoginDialog({ children }: LoginDialogProps) {
     </Dialog>
   )
 }
+
