@@ -4,7 +4,11 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { CheckCircle2 } from "lucide-react"
 import { motion, Variants } from "framer-motion"
-import { LoginDialog } from "./login-dialog" // Make sure this is imported
+import { LoginDialog } from "@/components/login-dialog"
+import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
+import { createClient } from "@/lib/supabase/client"
+import type { User } from "@supabase/supabase-js"
 
 type Feature = { text: string; muted?: boolean }
 
@@ -27,6 +31,51 @@ const PRICES: Record<Currency, { free: string; pro: string; enterprise: string; 
 }
 
 export function Pricing({ currency = "USD" }: { currency: Currency }) {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+  const supabase = createClient();
+
+  useEffect(() => {
+    const getUser = async () => {
+      const { data } = await supabase.auth.getUser();
+      setUser(data.user);
+      setLoading(false);
+    };
+    getUser();
+  }, [supabase.auth]);
+  
+  const handleUpgradeClick = (plan: { name: string; price: string }) => {
+    router.push(`/payment?plan=${plan.name}&price=${encodeURIComponent(plan.price)}`);
+  };
+
+  const planButton = (plan: { name: string; price: string }) => {
+    const commonBtnClass = "w-full cursor-pointer rounded-full px-4 py-2 text-sm font-medium text-black shadow transition-[box-shadow,transform,filter] active:translate-y-[1px]";
+    
+    if (loading) {
+      return <Button disabled className={`${commonBtnClass} bg-neutral-400`}>Loading...</Button>
+    }
+
+    if (user) {
+      return (
+        <Button 
+          className={commonBtnClass} style={{ backgroundColor: ACCENT }}
+          onClick={() => handleUpgradeClick(plan)}
+        >
+          Upgrade
+        </Button>
+      )
+    }
+
+    return (
+      <LoginDialog plan={plan}>
+        <Button className={commonBtnClass} style={{ backgroundColor: ACCENT }}>
+          Get Started
+        </Button>
+      </LoginDialog>
+    )
+  }
+
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
     show: {
@@ -93,11 +142,7 @@ export function Pricing({ currency = "USD" }: { currency: Currency }) {
                   <meta itemProp="priceCurrency" content={currency} />
                 </div>
                 <div className="flex gap-2">
-                  <LoginDialog plan={{ name: "Free", price: PRICES[currency].free }}>
-                    <Button className="w-full cursor-pointer rounded-full px-4 py-2 text-sm font-medium text-black shadow transition-[box-shadow,transform,filter] active:translate-y-[1px]" style={{ backgroundColor: ACCENT }}>
-                      Get Started
-                    </Button>
-                  </LoginDialog>
+                  {planButton({ name: "Free", price: PRICES[currency].free })}
                 </div>
               </CardHeader>
               <CardContent className="pt-0">
@@ -128,11 +173,7 @@ export function Pricing({ currency = "USD" }: { currency: Currency }) {
                   <meta itemProp="priceCurrency" content={currency} />
                 </div>
                 <div className="flex gap-2">
-                  <LoginDialog plan={{ name: "Pro", price: PRICES[currency].pro }}>
-                    <Button className="w-full cursor-pointer rounded-full px-4 py-2 text-sm font-medium text-black shadow transition-[box-shadow,transform,filter] active:translate-y-[1px]" style={{ backgroundColor: ACCENT }}>
-                      Get Started
-                    </Button>
-                  </LoginDialog>
+                  {planButton({ name: "Pro", price: PRICES[currency].pro })}
                 </div>
               </CardHeader>
               <CardContent className="pt-0">
@@ -162,11 +203,7 @@ export function Pricing({ currency = "USD" }: { currency: Currency }) {
                   <meta itemProp="priceCurrency" content={currency} />
                 </div>
                 <div className="flex gap-2">
-                   <LoginDialog plan={{ name: "Enterprise", price: PRICES[currency].enterprise }}>
-                    <Button className="w-full cursor-pointer rounded-full px-4 py-2 text-sm font-medium text-black shadow transition-[box-shadow,transform,filter] active:translate-y-[1px]" style={{ backgroundColor: ACCENT }}>
-                      Get Started
-                    </Button>
-                  </LoginDialog>
+                   {planButton({ name: "Enterprise", price: PRICES[currency].enterprise })}
                 </div>
               </CardHeader>
               <CardContent className="relative pt-0">
@@ -185,4 +222,3 @@ export function Pricing({ currency = "USD" }: { currency: Currency }) {
     </motion.section>
   )
 }
-

@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { createClient } from "@/lib/supabase/client"
+import { Loader2 } from "lucide-react" // Import the loader icon
 
 interface LoginDialogProps {
   children: React.ReactNode
@@ -100,8 +101,6 @@ export function LoginDialog({ children, plan }: LoginDialogProps) {
     }
 
     try {
-      // For paid plans, we need to redirect to payment *after* email confirmation.
-      // We'll add the plan details to the "next" URL for our callback to handle.
       let redirectTo = `${window.location.origin}/auth/callback`
       if (plan && plan.name !== "Free") {
         redirectTo += `?next=/payment?plan=${plan.name.toLowerCase()}&price=${encodeURIComponent(plan.price)}`
@@ -176,7 +175,14 @@ export function LoginDialog({ children, plan }: LoginDialogProps) {
 
               {error && <p className="text-sm text-red-400">{error}</p>}
               <Button type="submit" disabled={isLoading} className="w-full bg-lime-500 hover:bg-lime-600 text-black font-semibold">
-                {isLoading ? "Signing in..." : "Continue"}
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Signing in...
+                  </>
+                ) : (
+                  "Continue"
+                )}
               </Button>
             </form>
           </TabsContent>
@@ -208,7 +214,14 @@ export function LoginDialog({ children, plan }: LoginDialogProps) {
 
               {error && <p className="text-sm text-red-400">{error}</p>}
               <Button type="submit" disabled={isLoading} className="w-full bg-lime-500 hover:bg-lime-600 text-black font-semibold">
-                {isLoading ? "Creating account..." : "Continue"}
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Creating account...
+                  </>
+                ) : (
+                  "Continue"
+                )}
               </Button>
             </form>
           </TabsContent>
@@ -217,4 +230,3 @@ export function LoginDialog({ children, plan }: LoginDialogProps) {
     </Dialog>
   )
 }
-

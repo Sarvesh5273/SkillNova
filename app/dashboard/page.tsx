@@ -7,23 +7,23 @@ import { Settings, HelpCircle, LogOut, Crown } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { SettingsDialog } from "@/components/settings-dialog"; // Import the new component
+import { SettingsDialog } from "@/components/settings-dialog";
 
 export default function UserDashboardPage() {
   const [user, setUser] = useState<any>(null);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false); // Add state for the dialog
+  const [isLoading, setIsLoading] = useState(true); // Add loading state
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
     const supabase = createClient();
-
     const getUser = async () => {
       const {
         data: { user },
       } = await supabase.auth.getUser();
       setUser(user);
+      setIsLoading(false); // Set loading to false after fetching
     };
-
     getUser();
   }, []);
 
@@ -32,6 +32,15 @@ export default function UserDashboardPage() {
     await supabase.auth.signOut();
     router.push("/");
   };
+  
+  // Render a loading state while fetching data
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="w-10 h-10 border-4 border-[#C6FF3A] border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -56,7 +65,9 @@ export default function UserDashboardPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="text-center">
-              <Button className="bg-lime-500 hover:bg-lime-600 text-black font-semibold">Upgrade to Pro</Button>
+              <Link href="/pricing">
+                <Button className="bg-lime-500 hover:bg-lime-600 text-black font-semibold">Upgrade to Pro</Button>
+              </Link>
             </CardContent>
           </Card>
 
