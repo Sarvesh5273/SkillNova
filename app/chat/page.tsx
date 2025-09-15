@@ -25,8 +25,6 @@ interface Message {
   content: string;
 }
 
-// Replace the existing SidebarContent component with this one
-
 const SidebarContent = ({
   isExpanded,
   onSettingsClick,
@@ -68,7 +66,7 @@ const SidebarContent = ({
         </TooltipTrigger>
         {!isExpanded && <TooltipContent side="right">New Chat</TooltipContent>}
       </Tooltip>
-      
+
       <Tooltip>
         <TooltipTrigger asChild>
           {/* Wrapped in a span */}
@@ -169,9 +167,12 @@ export default function ChatUIPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const supabase = createClient();
   const sidebarRef = useRef<HTMLDivElement>(null);
+  const [currentChatId, setCurrentChatId] = useState<string | null>(null);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -196,6 +197,96 @@ export default function ChatUIPage() {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     router.push("/");
+  };
+
+  const handleSendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim()) return;
+
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      role: "user",
+      content: input,
+    };
+    setMessages((prev) => [...prev, userMessage]);
+    setInput("");
+    setIsLoading(true);
+
+    let chatId = currentChatId;
+
+    // Create a new chat if there isn't one
+    if (!chatId) {
+      const { data, error } = await supabase
+        .from("chats")
+        .insert({ user_id: user.id, title: input.substring(0, 50) })
+        .select()
+        .single();
+
+      if (error) {
+        console.error("Error creating chat:", error);
+        // Handle error appropriately
+        setIsLoading(false);
+        return;
+      }
+      chatId = data.id;
+      setCurrentChatId(chatId);
+    }
+    
+    // Save user message
+    const { error: userMessageError } = await supabase.from("messages").insert({
+      chat_id: chatId,
+      role: "user",
+      content: input,
+    });
+
+    if (userMessageError) {
+      console.error("Error saving user message:", userMessageError);
+      // Handle error
+    }
+
+    try {
+      const response = await fetch("/api/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ prompt: input }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to get a response from the AI.");
+      }
+
+      const data = await response.json();
+      const assistantMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content: data.text,
+      };
+      setMessages((prev) => [...prev, assistantMessage]);
+
+      // Save assistant message
+      const { error: assistantMessageError } = await supabase.from("messages").insert({
+        chat_id: chatId,
+        role: "assistant",
+        content: data.text,
+      });
+
+      if (assistantMessageError) {
+        console.error("Error saving assistant message:", assistantMessageError);
+        // Handle error
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content: "Sorry, I'm having trouble connecting. Please try again later.",
+      };
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -250,19 +341,27 @@ export default function ChatUIPage() {
             </div>
             <div className="p-4 bg-gradient-to-t from-[#131314] to-transparent">
               <div className="max-w-4xl mx-auto">
-                <div className="relative">
+                <form onSubmit={handleSendMessage} className="relative">
                   <Input
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
                     placeholder="Ask me anything about your career..."
                     className="bg-[#1e1f20] border-neutral-700 text-white placeholder:text-gray-400 rounded-2xl text-base py-7 pl-6 pr-16"
                   />
                   <Button
+                    type="submit"
+                    disabled={isLoading}
                     size="icon"
                     className="absolute right-2 top-1/2 -translate-y-1/2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-full w-10 h-10"
                   >
-                    <Send className="w-5 h-5" />
+                    {isLoading ? (
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    ) : (
+                      <Send className="w-5 h-5" />
+                    )}
                     <span className="sr-only">Send message</span>
                   </Button>
-                </div>
+                </form>
               </div>
             </div>
           </div>
