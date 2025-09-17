@@ -14,7 +14,6 @@ export const metadata: Metadata = {
   title: "SkillNova | Your AI Career Mentor",
   description:
     "Get personalized roadmaps, daily goals, and mentorship to master your career journey with SkillNova's AI-powered career guidance.",
-  generator: "v0.app",
 }
 
 export default function RootLayout({

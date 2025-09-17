@@ -8,9 +8,6 @@ import { AboutSection } from "@/components/about-section"
 import Script from "next/script"
 import { headers } from "next/headers"
 
-// ✅ Force static generation for low TTFB, but allow dynamic headers
-export const dynamic = "force-dynamic"
-
 type Currency = "INR" | "USD"
 
 // Function to determine currency on the server
