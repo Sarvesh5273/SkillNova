@@ -320,14 +320,16 @@ export default function ChatUIPage() {
         e.preventDefault();
         if (!input.trim() || !user) return;
     
-        setIsLoading(true);
         const userMessageContent = input;
         setInput("");
+
+        const newMessages: Message[] = [
+            ...messages,
+            { id: Date.now().toString(), role: "user", content: userMessageContent },
+        ];
     
-        setMessages((prev) => [
-          ...prev,
-          { id: Date.now().toString(), role: "user", content: userMessageContent },
-        ]);
+        setMessages(newMessages);
+        setIsLoading(true);
     
         let chatId = currentChatId;
     
@@ -347,23 +349,21 @@ export default function ChatUIPage() {
     
           const { error: userMessageError } = await supabase.from("messages").insert({
             chat_id: chatId,
+            user_id: user.id,
             role: "user",
             content: userMessageContent,
           });
     
           if (userMessageError) throw new Error(`Error saving user message: ${userMessageError.message}`);
     
-          const assistantMessageId = (Date.now() + 1).toString();
-          setMessages((prev) => [
-            ...prev,
-            { id: assistantMessageId, role: "assistant", content: "" },
-          ]);
-    
+          // --- THE CHANGE IS HERE ---
+          // We now send the entire conversation history
           const response = await fetch("/api/generate", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ prompt: userMessageContent }),
+            body: JSON.stringify({ messages: newMessages }), // Send the whole array
           });
+          // --------------------------
     
           if (!response.ok || !response.body) {
             throw new Error("Failed to get a streaming response from the AI.");
@@ -372,6 +372,13 @@ export default function ChatUIPage() {
           const reader = response.body.getReader();
           const decoder = new TextDecoder();
           let fullResponse = "";
+          
+          // Add a placeholder for the assistant's message
+          const assistantMessageId = (Date.now() + 1).toString();
+          setMessages((prev) => [
+            ...prev,
+            { id: assistantMessageId, role: "assistant", content: "" },
+          ]);
     
           while (true) {
             const { done, value } = await reader.read();
@@ -388,6 +395,7 @@ export default function ChatUIPage() {
     
           const { error: assistantMessageError } = await supabase.from("messages").insert({
             chat_id: chatId,
+            user_id: user.id,
             role: "assistant",
             content: fullResponse,
           });
@@ -439,7 +447,7 @@ export default function ChatUIPage() {
               className={cn(
                 "h-full flex flex-col",
                 "transition-[padding-left] duration-200 ease-out",
-                isSidebarOpen ? "md:pl-64" : "md:pl-20"
+                isSidebarOpen ? "md:pl-64" : "md-pl-20"
               )}
             >
               <div className="p-2 flex items-center border-b border-neutral-800 md:hidden">

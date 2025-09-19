@@ -49,7 +49,7 @@ export const ChatMessage = React.memo(({ role, content }: ChatMessageProps) => {
               h2: ({ node, ...props }) => <h2 className="text-lg font-semibold text-white mt-3 mb-1" {...props} />,
               h3: ({ node, ...props }) => <h3 className="text-md font-semibold text-white mt-2 mb-1" {...props} />,
               p: ({ node, ...props }) => <p className="text-neutral-300 my-2" {...props} />,
-              strong: ({ node, ...props }) => <strong className="font-bold text-lime-400" {...props} />,
+              strong: ({ node, ...props }) => <strong className="font-bold text-lime-500/70" {...props} />,
               ul: ({ node, ...props }) => <ul className="list-disc pl-5 my-2" {...props} />,
               li: ({ node, ...props }) => <li className="text-neutral-300" {...props} />,
             }}
